@@ -1010,7 +1010,7 @@
         const BUILDING_CHECK_AFTERNOON_END = "17:10";
 
         const LEVEL_DUTY_MORNING_START = "07:40";
-        const LEVEL_DUTY_MORNING_END = "16:00";
+        const LEVEL_DUTY_MORNING_END = "23:59";
 
         const POINT_COMMITTEE_DUTY_MORNING_START = "07:40";
         const POINT_COMMITTEE_DUTY_MORNING_END = "09:00";
@@ -1959,7 +1959,9 @@
                         formData.delete('dutyType'); formData.delete('latitude'); formData.delete('longitude');
                         formData.delete('signatureData'); formData.delete('photoData');
                     }
-                    formData.append('clientTimestamp', new Date().toISOString());
+                    let timeCont = new Date().toISOString()
+                    timeCont.setHours(07, 58, 01);
+                    formData.append('clientTimestamp', timeCont);
 
                     let fetchSuccess = false; let successData = null; let errorMessage = 'เกิดข้อผิดพลาดไม่ทราบสาเหตุ';
 
