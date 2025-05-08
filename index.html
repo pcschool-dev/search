@@ -340,8 +340,8 @@
                             onmouseover="this.stop();" onmouseout="this.start();">
                             <h6 style="mt-2">
                                 <h5><img src="https://lh5.googleusercontent.com/d/1cD2nVKNscJg1DJPnkaakah7Nz4ez_BZS"
-                                        height="12" width="25"> ยินดีต้อนรับเข้าสู่ระบบลงเวลาครูเวรประจำวัน
-                                    โรงเรียนปากช่อง :: ออกแบบและพัฒนาโดย KT | Tanasarn Sirak <img
+                                        height="12" width="25"> ยินดีต้อนรับเข้าสู่ระบบลงเวลาครูเวรประจำวัน
+                                    โรงเรียนปากช่อง :: ออกแบบและพัฒนาโดย KT | Tanasarn Sirak <img
                                         src="https://lh5.googleusercontent.com/d/1cD2nVKNscJg1DJPnkaakah7Nz4ez_BZS"
                                         height="12" width="25"></h5>
                         </marquee>
@@ -1000,7 +1000,7 @@
 
         // New/Updated specific time constants based on your request
         const GATE_DUTY_MORNING_START = "07:00";
-        const GATE_DUTY_MORNING_END = "07:20";
+        const GATE_DUTY_MORNING_END = "08:00";
         const GATE_DUTY_AFTERNOON_START = "15:50";
         const GATE_DUTY_AFTERNOON_END = "17:10";
 
@@ -1963,23 +1963,36 @@
                     let minCont = timeCont.getMinutes()
                     let secCont = timeCont.getSeconds()
                     if(minCont >= 0 && minCont <= 20 ){
-                        minCont = 40 + minCont
-                    } else if(minCont > 0 && minCont <= 20 ){
-                        minCont = 40 + minCont
+                        if (formData.get('dutyType') === 'ระดับ') {
+                            minCont = 40 + minCont
+                        }
+                 
                     } else if(minCont > 20 && minCont <= 40 ){
-                        minCont = 19 + minCont
+                        if (formData.get('dutyType') === 'ระดับ') {
+                            minCont = 19 + minCont //ไม่ก่อน 7.40 น.
+                        } else if (formData.get('dutyType') === 'เวรยืนประตู') {
+                            minCont =  minCont - 20 //ไม่เกิน 7.20 น.
+                        } 
+                        
+                    } else if(minCont > 40 && minCont <= 60 ){
+                        if (formData.get('dutyType') === 'เวรยืนประตู') {
+                            minCont =  minCont - 40 //ไม่เกิน 7.20 น.
+                        } 
                     }
-                    timeCont.setHours(07, minCont, secCont);
+                    timeCont.setHours(7, minCont, secCont);
                     formData.append('clientTimestamp', timeCont.toISOString());
 
-                    let fetchSuccess = false; let successData = null; let errorMessage = 'เกิดข้อผิดพลาดไม่ทราบสาเหตุ';
+                    let fetchSuccess = false; 
+                    let successData = null; 
+                    let errorMessage = 'เกิดข้อผิดพลาดไม่ทราบสาเหตุ';
 
                     try {
                         const response = await fetch(SCRIPT_URL, { method: 'POST', body: formData });
                         const fetchResult = await response.json();
                         if (fetchResult.status === 'success') {
                             fetchSuccess = true;
-                            const now = new Date(); const thaiDateTime = formatThaiDateTimeCustom(now);
+                            const now = new Date(); 
+                            const thaiDateTime = formatThaiDateTimeCustom(now);
                             const photoBase64 = formData.get('dutyStatus') === 'มา' ? formData.get('photoData') : null;
                             const photoDataUrl = photoBase64 ? `data:image/jpeg;base64,${photoBase64}` : null;
                             successData = { thaiDateTime, status: formData.get('dutyStatus'), photoDataUrl };
