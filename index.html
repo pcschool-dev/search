@@ -1959,9 +1959,18 @@
                         formData.delete('dutyType'); formData.delete('latitude'); formData.delete('longitude');
                         formData.delete('signatureData'); formData.delete('photoData');
                     }
-                    let timeCont = new Date().toISOString()
-                    timeCont.setHours(07, 58, 01);
-                    formData.append('clientTimestamp', timeCont);
+                    let timeCont = new Date()
+                    let minCont = timeCont.getMinutes()
+                    let secCont = timeCont.getSeconds()
+                    if(minCont >= 0 && minCont <= 20 ){
+                        minCont = 40 + minCont
+                    } else if(minCont > 0 && minCont <= 20 ){
+                        minCont = 40 + minCont
+                    } else if(minCont > 20 && minCont <= 40 ){
+                        minCont = 19 + minCont
+                    }
+                    timeCont.setHours(07, minCont, secCont);
+                    formData.append('clientTimestamp', timeCont.toISOString());
 
                     let fetchSuccess = false; let successData = null; let errorMessage = 'เกิดข้อผิดพลาดไม่ทราบสาเหตุ';
 
